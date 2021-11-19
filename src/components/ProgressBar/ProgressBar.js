@@ -5,64 +5,72 @@ import styled from "styled-components";
 import { COLORS } from "../../constants";
 import VisuallyHidden from "../VisuallyHidden";
 
+const SIZES = {
+    small: {
+        padding: "0",
+        height: "8px",
+        radius: "4px",
+    },
+    medium: {
+        padding: "0",
+        height: "14px",
+        radius: "4px",
+    },
+    large: {
+        padding: "4px",
+        height: "16px",
+        radius: "8px",
+    },
+};
+
 const ProgressBar = ({ value, size }) => {
     value = parseFloat(value);
     if (Number.isNaN(value)) value = 0;
     value = Math.min(100, Math.max(0, value));
 
-    let Component;
-    if (size === "large") {
-        Component = LargeWrapper;
-    } else if (size === "medium") {
-        Component = MediumWrapper;
-    } else {
-        Component = SmallWrapper;
-    }
-
     return (
-        <Component role="progressbar" aria-valuenow={value} aria-valuemin="0" aria-valuemax="100">
+        <BaseWrapper
+            role="progressbar"
+            aria-valuenow={value}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style={{ "--padding": SIZES[size].padding, "--radius": SIZES[size].radius }}
+        >
             <VisuallyHidden>{value}</VisuallyHidden>
-            <CurrentValue value={value} />
-        </Component>
+            <CurrentValueWrapper>
+                <CurrentValue
+                    value={value}
+                    style={{
+                        "--width": `${value}%`,
+                        "--height": SIZES[size].height,
+                        "--radius": value === 100 ? "4px" : 0,
+                    }}
+                />
+            </CurrentValueWrapper>
+        </BaseWrapper>
     );
 };
 
 const BaseWrapper = styled.div`
-    padding: 0;
-    border-radius: 8px;
+    padding: var(--padding);
+    border-radius: var(--radius);
     background-color: ${COLORS.transparentGray15};
     box-shadow: inset 0px 2px 4px ${COLORS.transparentGray35};
+`;
+
+const CurrentValueWrapper = styled.div`
+    border-radius: 4px;
     overflow: hidden;
 `;
 
-const LargeWrapper = styled(BaseWrapper)`
-    padding: 4px;
-`;
-
-const MediumWrapper = styled(BaseWrapper)``;
-
-const SmallWrapper = styled(BaseWrapper)``;
-
 const CurrentValue = styled.div`
-    --borderRadius: 4px;
+    width: var(--width);
+    height: var(--height);
+    border-radius: 4px 0 0 4px;
     background-color: ${COLORS.primary};
-    width: ${(props) => props.value}%;
-    border-top-left-radius: var(--borderRadius);
-    border-bottom-left-radius: var(--borderRadius);
-    border-top-right-radius: ${(props) => props.value === 100 && `var(--borderRadius)`};
-    border-bottom-right-radius: ${(props) => props.value === 100 && `var(--borderRadius)`};
 
-    ${LargeWrapper} & {
-        height: 16px;
-    }
-
-    ${MediumWrapper} & {
-        height: 14px;
-    }
-
-    ${SmallWrapper} & {
-        height: 8px;
-    }
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
 `;
 
 export default ProgressBar;
