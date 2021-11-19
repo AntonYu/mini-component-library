@@ -10,18 +10,32 @@ const Select = ({ label, value, onChange, children }) => {
 
     return (
         <Wrapper>
-            {displayedValue}
-            <Chevrone id="chevron-down" size={24} strokeWidth={2} />
             <HiddenSelect value={value} onChange={onChange}>
                 {children}
             </HiddenSelect>
+            <VisibleSelect>
+                {displayedValue}
+                <Chevrone id="chevron-down" size={24} strokeWidth={2} />
+            </VisibleSelect>
         </Wrapper>
     );
 };
 
+const HiddenSelect = styled.select`
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`;
+
 const Wrapper = styled.div`
     width: fit-content;
     position: relative;
+`;
+
+const VisibleSelect = styled.div`
     padding: 12px 52px 12px 16px;
     font-size: 16px;
     line-height: 19px;
@@ -30,12 +44,12 @@ const Wrapper = styled.div`
     border: 0;
     border-radius: 8px;
 
-    &:focus {
+    ${HiddenSelect}:focus + & {
         outline: 2px solid ${COLORS.primary};
         outline-offset: 0;
     }
 
-    &:hover {
+    ${HiddenSelect}:hover + & {
         color: ${COLORS.black};
     }
 `;
@@ -45,15 +59,7 @@ const Chevrone = styled(Icon)`
     top: 10px;
     right: 8px;
     color: inherit;
-`;
-
-const HiddenSelect = styled.select`
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    pointer-events: none;
 `;
 
 export default Select;
