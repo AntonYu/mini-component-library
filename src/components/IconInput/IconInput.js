@@ -10,12 +10,12 @@ const SIZES = {
     small: {
         fontSize: "14px",
         iconSize: 14,
-        iconMargin: 11,
+        iconPadding: 11,
     },
     large: {
         fontSize: "18px",
         iconSize: 18,
-        iconMargin: 17,
+        iconPadding: 17,
     },
 };
 
@@ -26,22 +26,17 @@ const IconInput = ({ label, icon, width = 250, size, placeholder }) => {
     }
 
     return (
-        <Wrapper style={{ "--width": `${width}px` }}>
+        <Wrapper style={{ "--max-width": `${width}px` }}>
+            <Input
+                type="text"
+                placeholder={placeholder}
+                style={{
+                    "--fontSize": styles.fontSize,
+                    "--padding": `${styles.iconPadding + styles.iconSize}px`,
+                }}
+            />
+
             <Label>
-                <InputWrapper
-                    style={{
-                        "--margin": `${styles.iconMargin + styles.iconSize}px`,
-                    }}
-                >
-                    <Input
-                        type="text"
-                        placeholder={placeholder}
-                        style={{
-                            "--fontSize": styles.fontSize,
-                            "--margin": `${styles.iconMargin + styles.iconSize}px`,
-                        }}
-                    />
-                </InputWrapper>
                 <IconWrapper style={{ "--width": `${styles.iconSize}px` }}>
                     <Icon id={icon} size={styles.iconSize} strokeWidth={2} />
                 </IconWrapper>
@@ -54,7 +49,9 @@ const IconInput = ({ label, icon, width = 250, size, placeholder }) => {
 const Wrapper = styled.div`
     border-bottom: 1px solid ${COLORS.black};
     padding-bottom: 2px;
-    width: var(--width);
+    max-width: var(--max-width);
+    width: 100%;
+    position: relative;
 `;
 
 const Input = styled.input`
@@ -62,6 +59,12 @@ const Input = styled.input`
     border: 0;
     font-weight: 700;
     width: 100%;
+    padding-left: var(--padding);
+    color: ${COLORS.gray700};
+
+    &:hover {
+        color: ${COLORS.black};
+    }
 
     &::placeholder {
         font-weight: normal;
@@ -73,16 +76,26 @@ const Input = styled.input`
     }
 `;
 
-const Label = styled.div`
+const Label = styled.label`
     width: 100%;
     display: block;
     position: relative;
     color: ${COLORS.gray700};
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 
-    .focus-within {
+    ${Input}:focus + & {
         outline: 2px solid ${COLORS.primary};
         outline-offset: 4px;
         border-radius: 2px;
+    }
+
+    ${Input}:hover + & {
+        color: ${COLORS.black};
     }
 `;
 
@@ -94,10 +107,6 @@ const IconWrapper = styled.div`
     margin: auto;
     width: var(--width);
     height: var(--width);
-`;
-
-const InputWrapper = styled.div`
-    margin-left: var(--margin);
 `;
 
 export default IconInput;
